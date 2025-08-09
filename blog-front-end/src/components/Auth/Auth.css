@@ -1,0 +1,96 @@
+/* غلاف للفورم */
+.login-form-wrapper {
+    max-width: 420px;
+    margin: 40px auto;
+    padding: 28px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    animation: fadeIn .35s ease-out;
+}
+
+/* العنوان */
+.login-form-wrapper h2 {
+    margin: 0 0 8px;
+    color: #111827;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.login-form-wrapper .form-subtitle {
+    margin-bottom: 20px;
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+/* الحقول */
+.login-form-wrapper .form-group {
+    margin-bottom: 16px;
+}
+
+.login-form-wrapper label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #111827;
+}
+
+.login-form-wrapper .form-control {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login-form-wrapper .form-control:focus {
+    outline: none;
+    border-color: #4facfe;
+    box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.15);
+}
+
+/* تلميحات */
+.login-form-wrapper .hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+/* الزر */
+.login-form-wrapper .btn-primary {
+    background: #4facfe;
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 12px 14px;
+    border-radius: 10px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.login-form-wrapper .btn-primary:hover {
+    background-color: #3b8bd6;
+}
+
+/* رسالة الخطأ */
+.login-form-wrapper .errorregister {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.9rem;
+    color: #ff4d4d;
+}
+
+/* تأثير الدخول */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
