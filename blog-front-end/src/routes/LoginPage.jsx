@@ -56,7 +56,7 @@ export default function LoginPage() {
     <>
       {loading && <Loading />}
       <div className="login-form-wrapper" style={{ maxWidth: "400px" }}>
-        <h2>Sign in User </h2>
+        <h2>SigIn User </h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email:</label>
