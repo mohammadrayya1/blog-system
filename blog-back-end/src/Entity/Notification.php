@@ -18,11 +18,11 @@ class Notification
 
     #[ORM\ManyToOne(inversedBy: 'notifications')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Account $owner = null;
+    private Account $owner;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Account $account = null;
+    private Account $account;
 
     #[ORM\Column]
     private ?bool $is_seen = null;

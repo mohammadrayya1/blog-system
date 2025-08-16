@@ -9,7 +9,7 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 /** @extends PersistentProxyObjectFactory<Account> */
 final class AccountFactory extends PersistentProxyObjectFactory
 {
-    // اجعلها Nullable تمامًا مثل مثال الوثائق
+
     public function __construct(private ?UserPasswordHasherInterface $passwordHasher = null)
     {
         parent::__construct();
@@ -29,7 +29,8 @@ final class AccountFactory extends PersistentProxyObjectFactory
             'address' => self::faker()->address(),
             'phone' => self::faker()->phoneNumber(),
             'title' => self::faker()->jobTitle(),
-            'plainPassword' => self::faker()->password(12, 20)
+            'plainPassword' => self::faker()->password(12, 20),
+            "image" => 'https://picsum.photos/seed/' . uniqid() . '/300/300'
         ];
     }
 

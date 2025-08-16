@@ -15,13 +15,13 @@ class Followers
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'no')]
+    #[ORM\ManyToOne(inversedBy: 'followers')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Account $account = null;
+    private Account $account;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Account $followedBy = null;
+    private Account $followedBy;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private DateTime $followed_since;

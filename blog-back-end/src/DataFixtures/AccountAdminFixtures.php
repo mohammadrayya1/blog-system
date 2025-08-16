@@ -2,17 +2,18 @@
 
 namespace App\DataFixtures;
 
-use App\Factory\AccountFactory;
-use App\Factory\PostFactory;
+
+use App\Factory\AdminAccountFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
-class AccountFixtures extends Fixture
+class AccountAdminFixtures extends Fixture
 {
 
     public function load(ObjectManager $manager): void
     {
-        AccountFactory::createMany(11, ["posts" => PostFactory::new()->many(10)]);
+        AdminAccountFactory::createMany(10);
         $manager->flush();
     }
+
 }

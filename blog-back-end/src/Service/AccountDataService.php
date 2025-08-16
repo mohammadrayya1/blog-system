@@ -3,20 +3,24 @@
 namespace App\Service;
 
 use App\Contract\UploadFileInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
+use App\Entity\Account;
+use App\Repository\AccountRepository;
 
 class AccountDataService
 {
 
-    public function __construct(private readonly UploadFileInterface $uploadFile)
+    public function __construct(private readonly UploadFileInterface $uploadFile, private readonly AccountRepository $accountRepository)
     {
     }
 
-    public function getUserData(UserInterface $user){
+    public function getUserData(?Account $user = null)
+    {
 
+        return $this->accountRepository->find(11);
     }
 
-    public function updateUserData(){
+    public function updateUserData()
+    {
 
     }
 }

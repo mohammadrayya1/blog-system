@@ -9,7 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 class AdminAccount extends AbstructAccount
 {
 
-
+    public const ROLLE_ADMIN = "ROLLE_ADMIN";
+    public const ROLLE_SUPER_ADMIN = "ROLLE_SUPER_ADMIN";
     #[ORM\Column(length: 255)]
     private ?string $adminRolle = null;
 

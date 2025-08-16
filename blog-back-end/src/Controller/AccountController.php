@@ -18,7 +18,7 @@ final class AccountController extends AbstractController
     {
     }
 
-    #[Route('/account', name: 'app_account')]
+
     public function index(): JsonResponse
     {
         return $this->json([
@@ -27,10 +27,32 @@ final class AccountController extends AbstractController
         ]);
     }
 
-
+    #[Route('/account', name: 'app_account')]
     public function getProfile()
     {
-        return "Profile";
+        $account = $this->accountDataService->getUserData();
+        $postsArray = [];
+        $followers = $account->getFollowers;
+
+
+        foreach ($account->getPosts() as $post) {
+            $postsArray[] = [
+                'id' => $post->getId(),
+                'title' => $post->getDescription(),
+                'likes' => $post->getLikes(),
+            ];
+        }
+        return $this->json([
+            "account" => [
+                'id' => $account->getId(),
+                'title' => $account->getTitle(),
+                'lastname' => $account->getLastName(),
+                "image" => $account->getImage(),
+                'phone' => $account->getPhone(),
+                'address' => $account->getAddress(),
+                'posts' => $postsArray
+            ]]);
+
     }
 
     public function viewProfile(int $id)

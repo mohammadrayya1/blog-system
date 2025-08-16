@@ -35,7 +35,10 @@ class Account extends AbstructAccount  // تصحيح: Abstract بدلاً من A
      * @var Collection<int, Followers>
      */
     #[ORM\OneToMany(targetEntity: Followers::class, mappedBy: 'account')]
-    private Collection $followers;  // تغيير الاسم من 'no' إلى 'followers'
+    private Collection $followers;
+
+    #[ORM\Column(length: 255)]
+    private ?string $image = null;  // تغيير الاسم من 'no' إلى 'followers'
 
     public function __construct()
     {
@@ -155,6 +158,18 @@ class Account extends AbstructAccount  // تصحيح: Abstract بدلاً من A
                 $follower->setAccount(null);
             }
         }
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): static
+    {
+        $this->image = $image;
+
         return $this;
     }
 
