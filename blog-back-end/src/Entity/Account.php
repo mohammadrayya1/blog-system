@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: AccountRepository::class)]
-class Account extends AbstructAccount  // تصحيح: Abstract بدلاً من Abstruct
+class Account extends AbstructAccount
 {
     #[ORM\Column(length: 255)]
     private ?string $title = null;

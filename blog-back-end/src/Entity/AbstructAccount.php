@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\AbstructAccountRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: AbstructAccountRepository::class)]
 #[ORM\InheritanceType("JOINED")]
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
     "admin_account" => AdminAccount::class,
     "account" => Account::class
 ])]
-class AbstructAccount implements PasswordAuthenticatedUserInterface
+class AbstructAccount implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -101,5 +102,17 @@ class AbstructAccount implements PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         $this->plainPassword = null;
+    }
+
+
+    // ✅ UserInterface methods
+    public function getUserIdentifier(): string
+    {
+        return $this->email ?? '';
+    }
+
+    public function getRoles(): array
+    {
+        return ['ROLE_USER'];
     }
 }

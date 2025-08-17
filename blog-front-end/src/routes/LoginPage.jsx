@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "../components/Auth/Auth.css";
+import { useAuth } from "../components/AuthContext.jsx";
 import axios from "axios";
 import { LOGINUSER, baseUrl } from "../components/Api/Api.jsx";
 import Loading from "../components/Loading/loading";
@@ -7,6 +8,8 @@ import Cookie from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
+  const { login } = useAuth(); // 👈 هنا بتجيب login من AuthContext
+
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -22,22 +25,12 @@ export default function LoginPage() {
     setErrorLogin("");
     Setloading(true);
     try {
-      var result = await axios.post(`${baseUrl}/${LOGINUSER}`, form);
+      login(form.email, form.password);
+      //  window.location.pathname = "/home";
 
-      if (result.status === 200) {
-        console.log(result);
-        const cookies = Cookie();
-        const token = result.data.token;
-
-        cookies.set("user-token", token, { maxAge: 7200 });
-        cookies.set("username", result.data.user.name, { maxAge: 7200 });
-        cookies.set("user_id", result.data.user.id, { maxAge: 7200 });
-
-        window.location.pathname = "/home";
-
-        Setloading(false);
-      }
+      Setloading(false);
     } catch (error) {
+      console.log(error);
       Setloading(false);
       if (error.response.status === 422) {
         setErrorLogin(error.response.data.message);

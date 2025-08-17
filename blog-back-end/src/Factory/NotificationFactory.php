@@ -2,7 +2,6 @@
 
 namespace App\Factory;
 
-use App\Entity\Account;
 use App\Entity\Notification;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
@@ -41,11 +40,6 @@ final class NotificationFactory extends PersistentProxyObjectFactory
         ];
     }
 
-
-    public function addPost(Account $account): self
-    {
-        return $this->state(['post' => PostFactory::random(['account' => $account])]);
-    }
 
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#initialization

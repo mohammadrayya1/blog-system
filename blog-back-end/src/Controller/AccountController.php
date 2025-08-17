@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Account;
 use App\Service\AccountDataService;
 use App\Service\FollowService;
 use App\Service\PostService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
+
 
 final class AccountController extends AbstractController
 {
@@ -27,13 +29,33 @@ final class AccountController extends AbstractController
         ]);
     }
 
-    #[Route('/account', name: 'app_account')]
-    public function getProfile()
+    #[Route('/account/{id}', name: 'app_account')]
+    public function getProfile(Account $account)
     {
-        $account = $this->accountDataService->getUserData();
-        $postsArray = [];
-        $followers = $account->getFollowers;
 
+
+        $postsArray = [];
+        $followersArray = [];
+        $notificationsArrray = [];
+
+        $followers = $account->getFollowers();
+        $notifications = $account->getNotifications();
+
+        foreach ($notifications as $notification) {
+            $notificationsArrray[] = [
+                "notifyFrom" => $notification->getAccount()->getFirstName(),
+                "notifyOwner" => $notification->getOwner()->getFirstName(),
+            ];
+        }
+        foreach ($followers as $follower) {
+            $followedBy = $follower->getFollowedBy();
+            $followersArray[] = [
+                "followed_since" => $follower->getFollowedSince(),
+                "followedBy" => [
+                    "name" => $followedBy->getFirstName()
+                ]
+            ];
+        }
 
         foreach ($account->getPosts() as $post) {
             $postsArray[] = [
@@ -46,11 +68,13 @@ final class AccountController extends AbstractController
             "account" => [
                 'id' => $account->getId(),
                 'title' => $account->getTitle(),
-                'lastname' => $account->getLastName(),
+                'firstname' => $account->getFirstName(),
                 "image" => $account->getImage(),
                 'phone' => $account->getPhone(),
                 'address' => $account->getAddress(),
-                'posts' => $postsArray
+                'posts' => $postsArray,
+                "followers" => $followersArray,
+                "notifications" => $notificationsArrray
             ]]);
 
     }

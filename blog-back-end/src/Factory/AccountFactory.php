@@ -29,19 +29,14 @@ final class AccountFactory extends PersistentProxyObjectFactory
             'address' => self::faker()->address(),
             'phone' => self::faker()->phoneNumber(),
             'title' => self::faker()->jobTitle(),
-            'plainPassword' => self::faker()->password(12, 20),
+            'plainPassword' => 'Test1234',
             "image" => 'https://picsum.photos/seed/' . uniqid() . '/300/300'
         ];
     }
 
     protected function initialize(): static
     {
-        return $this->afterInstantiate(function (Account $account): void {
-            if ($this->passwordHasher !== null) {
-                $account->setPassword(
-                    $this->passwordHasher->hashPassword($account, $account->getPassword() ?? 'password')
-                );
-            }
-        });
+        
+        return $this;
     }
 }

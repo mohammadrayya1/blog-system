@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import Cookie from "universal-cookie";
+import { AxiosUser } from "./Api/Axios";
 
 const cookies = new Cookie();
 const AuthContext = createContext(undefined);
@@ -39,7 +40,11 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   const login = async (email, password) => {
-    const { data } = await axios.post("/api/login", { email, password });
+    const { data } = await AxiosUser.post("/api/account/login", {
+      email,
+      password,
+    });
+    console.log(data);
     setToken(data.token);
     setUser(data.user || null);
     if (data.user) {
@@ -49,6 +54,7 @@ export function AuthProvider({ children }) {
         sameSite: "Lax",
         secure: true,
       });
+      console.log(data);
     } else {
       cookies.remove("auth:user", { path: "/" });
     }

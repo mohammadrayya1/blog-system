@@ -1,13 +1,13 @@
 import axios from "axios";
 import { baseUrl } from "./Api";
-import Cookie from "cookie-universal";
+import Cookie from "universal-cookie";
 
-const cookie = Cookie();
-const tokenUser = cookie.get("user-token");
+const cookies = new Cookie(); // ✅ لازم new
+const tokenUser = cookies.get("user-token");
 
 export const AxiosUser = axios.create({
   baseURL: baseUrl,
   headers: {
-    Authorization: `Bearer ${tokenUser}`,
+    Authorization: tokenUser ? `Bearer ${tokenUser}` : "",
   },
 });

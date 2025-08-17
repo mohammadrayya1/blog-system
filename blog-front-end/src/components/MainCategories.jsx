@@ -43,9 +43,8 @@ const MainCategories = () => {
           Marketing
         </Link>
       </div>
-      <span className="text-xl font-medium">|</span>
       {/* search */}
-      <Search />
+      {/* <Search /> */}
     </div>
   );
 };

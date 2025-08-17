@@ -11,6 +11,7 @@ class AdminAccount extends AbstructAccount
 
     public const ROLLE_ADMIN = "ROLLE_ADMIN";
     public const ROLLE_SUPER_ADMIN = "ROLLE_SUPER_ADMIN";
+
     #[ORM\Column(length: 255)]
     private ?string $adminRolle = null;
 
@@ -25,5 +26,10 @@ class AdminAccount extends AbstructAccount
         $this->adminRolle = $adminRolle;
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return [$this->adminRolle ?? self::ROLLE_ADMIN];
     }
 }
