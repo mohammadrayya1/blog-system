@@ -20,6 +20,8 @@ final class AccountAuthController extends AbstractController
     #[Route('/account/auth', name: 'app_account_auth')]
     public function index(): JsonResponse
     {
+
+
         return $this->json([
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/AccountAuthController.php',

@@ -1,39 +1,17 @@
-# -----------------------
-# Symfony / PHP Backend
-# -----------------------
-/.env.local
-/.env.local.php
-/.env.*.local
-/config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
-/vendor/
+# Backend
+/blog-back-end/var/
+/blog-back-end/vendor/
+/blog-back-end/.env.local
+/blog-back-end/.env.*.local
+/blog-back-end/.phpunit.result.cache
 
-# -----------------------
-# Frontend (React / Vue)
-# -----------------------
-# Logs
-logs
+# Frontend
+/blog-front-end/node_modules/
+/blog-front-end/dist/
+/blog-front-end/.env
+/blog-front-end/.env.*
+
+# Docker artifacts
+/.DS_Store
+**/.DS_Store
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-# Node / Build output
-node_modules
-dist
-dist-ssr
-*.local
-
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
