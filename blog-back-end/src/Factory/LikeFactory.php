@@ -2,13 +2,13 @@
 
 namespace App\Factory;
 
-use App\Entity\Post;
+use App\Entity\Like;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<Post>
+ * @extends PersistentProxyObjectFactory<Like>
  */
-final class PostFactory extends PersistentProxyObjectFactory
+final class LikeFactory extends PersistentProxyObjectFactory
 {
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#factories-as-services
@@ -21,7 +21,7 @@ final class PostFactory extends PersistentProxyObjectFactory
 
     public static function class(): string
     {
-        return Post::class;
+        return Like::class;
     }
 
     /**
@@ -32,12 +32,8 @@ final class PostFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'account' => AccountFactory::new(),
-            'createdAt' => self::faker()->dateTime(),
-            'description' => self::faker()->sentence(),
-            'updatedAt' => self::faker()->dateTime(),
-            "image" => 'https://picsum.photos/seed/' . uniqid() . '/300/300',
-            'category' => CategoryFactory::random() ?? CategoryFactory::createOne(),
+            'account' => AccountFactory::random(),
+            'post' => PostFactory::random(),
         ];
     }
 
@@ -46,7 +42,8 @@ final class PostFactory extends PersistentProxyObjectFactory
      */
     protected function initialize(): static
     {
-        return $this// ->afterInstantiate(function(Post $post): void {})
-            ;
+        return $this
+            // ->afterInstantiate(function(Like $like): void {})
+        ;
     }
 }

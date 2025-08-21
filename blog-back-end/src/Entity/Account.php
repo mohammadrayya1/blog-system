@@ -38,7 +38,7 @@ class Account extends AbstructAccount
     private Collection $followers;
 
     #[ORM\Column(length: 255)]
-    private ?string $image = null;  // تغيير الاسم من 'no' إلى 'followers'
+    private ?string $image = null;
 
     public function __construct()
     {

@@ -6,14 +6,15 @@ use App\Factory\AccountFactory;
 use App\Factory\CommentFactory;
 use App\Factory\PostFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class CommentFixture extends Fixture
+class CommentFixture extends Fixture implements DependentFixtureInterface
 {
 
     public function load(ObjectManager $manager): void
     {
-        CommentFactory::new()->many(10)->create(function () {
+        CommentFactory::new()->many(500)->create(function () {
             return [
                 "post" => PostFactory::random(),
                 "account" => AccountFactory::random()
@@ -23,7 +24,7 @@ class CommentFixture extends Fixture
     }
 
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             AccountFixtures::class

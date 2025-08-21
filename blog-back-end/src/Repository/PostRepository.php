@@ -40,4 +40,23 @@ class PostRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
+    public function findPaginatedPosts(int $page, int $limit, ?string $category = null): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->leftJoin('p.category', 'c')->addSelect('c')
+            ->orderBy('p.id', 'DESC')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        if ($category) {
+
+            $qb->andWhere('LOWER(c.name) = :cat')->setParameter('cat', mb_strtolower($category));
+
+        }
+
+        $paginator = new \Doctrine\ORM\Tools\Pagination\Paginator($qb, true);
+        return [iterator_to_array($paginator), count($paginator)];
+    }
 }

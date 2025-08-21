@@ -5,9 +5,10 @@ namespace App\DataFixtures;
 use App\Factory\AccountFactory;
 use App\Factory\FollowersFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class FollowersFixture extends Fixture
+class FollowersFixture extends Fixture  implements DependentFixtureInterface
 {
 
     public function load(ObjectManager $manager): void
@@ -20,7 +21,7 @@ class FollowersFixture extends Fixture
         $manager->flush();
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             AccountFixtures::class

@@ -2,7 +2,8 @@
 
 namespace App\Service;
 
-use App\Dto\LoginRequest;
+
+use App\DtoEntity\LoginRequest;
 use App\Repository\AbstructAccountRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,12 +25,12 @@ class AuthService
 
     public function login(array $data): JsonResponse
     {
-        // 📨 نجهّز الـ DTO
+
         $loginRequest = new LoginRequest();
         $loginRequest->email = $data['email'] ?? '';
         $loginRequest->password = $data['password'] ?? '';
 
-        // ✅ validate input
+
         $errors = $this->validator->validate($loginRequest);
         if (count($errors) > 0) {
             return new JsonResponse([
@@ -38,10 +39,10 @@ class AuthService
             ], 400);
         }
 
-        // 🔍 البحث عن المستخدم
+
         $user = $this->userRepository->findOneBy(['email' => $loginRequest->email]);
 
-        // تأكد أن الكائن يطبّق الواجهتين المطلوبة
+
         if (
             !$user instanceof UserInterface ||
             !$user instanceof PasswordAuthenticatedUserInterface
@@ -52,7 +53,7 @@ class AuthService
             ], 404);
         }
 
-        // 🔑 تحقق من كلمة المرور
+
         if (!$this->passwordHasher->isPasswordValid($user, $loginRequest->password)) {
             return new JsonResponse([
                 'status' => 'error',
@@ -60,15 +61,16 @@ class AuthService
             ], 401);
         }
 
-        // 🪙 إنشاء التوكن
+
         $token = $this->JWTManager->create($user);
 
-        // 🎉 نجاح
+
         return new JsonResponse([
             'status' => 'success',
             'token' => $token,
             'user' => [
                 'id' => $user->getId(),
+                "name"=>$user->getFirstName(),
                 'email' => $user->getEmail(),
                 'roles' => $user->getRoles(),
             ]

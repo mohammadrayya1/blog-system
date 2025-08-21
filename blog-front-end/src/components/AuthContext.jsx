@@ -17,8 +17,15 @@ export function AuthProvider({ children }) {
     if (savedToken) setToken(savedToken);
     if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
-      } catch {
+
+        const parsedUser = typeof savedUser === "string"
+            ? JSON.parse(decodeURIComponent(savedUser))
+            : savedUser;
+
+        console.log("parsedUser",parsedUser);
+        setUser(parsedUser);
+      } catch (e) {
+        console.error("Error parsing user from cookie:", e);
         setUser(null);
       }
     }
@@ -40,12 +47,13 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   const login = async (email, password) => {
-    const { data } = await AxiosUser.post("/api/account/login", {
+    const { data } = await AxiosUser.post("/account/login", {
       email,
       password,
     });
-    console.log(data);
+    console.log("Data" ,data);
     setToken(data.token);
+
     setUser(data.user || null);
     if (data.user) {
       cookies.set("auth:user", JSON.stringify(data.user), {

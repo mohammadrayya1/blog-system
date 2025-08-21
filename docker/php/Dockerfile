@@ -1,17 +1,17 @@
 FROM php:8.2-fpm
 
 # نظام
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git unzip wget curl libzip-dev libicu-dev libonig-dev \
     libpng-dev libjpeg-dev libfreetype6-dev libxml2-dev \
     libxslt1.1 libxslt1-dev libpq-dev libssl-dev \
  && rm -rf /var/lib/apt/lists/*
 
-# Symfony CLI (اختياري للتسهيل)
+# Symfony CLI
 RUN wget https://get.symfony.com/cli/installer -O - | bash \
     && mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
 
-# Extensions
+# PHP Extensions
 RUN docker-php-ext-configure intl \
  && docker-php-ext-install -j$(nproc) intl pdo_mysql zip opcache \
  && docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -20,6 +20,10 @@ RUN docker-php-ext-configure intl \
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
+
+RUN usermod -d /home/www-data www-data \
+ && mkdir -p /home/www-data \
+ && chown -R www-data:www-data /home/www-data
 
 # Entrypoint
 COPY docker/php/entrypoint.sh /usr/local/bin/project-entrypoint.sh

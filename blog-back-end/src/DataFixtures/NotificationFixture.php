@@ -6,9 +6,10 @@ use App\Factory\AccountFactory;
 use App\Factory\NotificationFactory;
 use App\Factory\PostFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class NotificationFixture extends Fixture
+class NotificationFixture extends Fixture implements DependentFixtureInterface
 {
 
     public function load(ObjectManager $manager): void
@@ -33,7 +34,7 @@ class NotificationFixture extends Fixture
     }
 
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             AccountFixtures::class

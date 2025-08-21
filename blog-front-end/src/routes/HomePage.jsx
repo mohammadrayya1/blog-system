@@ -1,7 +1,20 @@
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router-dom";
 import MainCategories from "../components/MainCategories";
 import FeaturedPosts from "../components/FeaturedPosts";
+import PostList from '../components/PostList.jsx'
+const LABELS = {
+  "web-design": "Web Design",
+  "development": "Development",
+  "databases": "Databases",
+  "seo": "Search Engines",
+  "marketing": "Marketing",
+};
 const HomePage = () => {
+  const [sp] = useSearchParams();
+  const cat = sp.get("cat") || "";
+
+  const heading = cat ? `${LABELS[cat] ?? cat} Posts` : "Recent Posts";
+
   return (
     <div className="mt-4 flex flex-col gap-4">
       {/* BREADCRUMB */}
@@ -64,10 +77,11 @@ const HomePage = () => {
       {/* CATEGORIES */}
       <MainCategories />
       {/* FEATURED POSTS */}
-      <FeaturedPosts />
+      {/*<FeaturedPosts />*/}
       {/* POST LIST */}
       <div className="">
         <h1 className="my-8 text-2xl text-gray-600">Recent Posts</h1>
+        <PostList cat={cat} key={cat} />
       </div>
     </div>
   );

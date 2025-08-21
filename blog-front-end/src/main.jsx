@@ -29,7 +29,7 @@ const router = createBrowserRouter([
         element: <PostListPage />,
       },
       {
-        path: "/:slug",
+        path: "/:id",
         element: <SingelPostPage />,
       },
       {

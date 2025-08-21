@@ -1,13 +1,25 @@
 import axios from "axios";
-import { baseUrl } from "./Api";
 import Cookie from "universal-cookie";
 
-const cookies = new Cookie(); // ✅ لازم new
-const tokenUser = cookies.get("user-token");
+const cookies = new Cookie();
+
 
 export const AxiosUser = axios.create({
-  baseURL: baseUrl,
-  headers: {
-    Authorization: tokenUser ? `Bearer ${tokenUser}` : "",
-  },
+  baseURL: "http://localhost:8080/api",
+  withCredentials: false,
+});
+
+
+export const AxiosAuth = axios.create({
+  baseURL: "http://localhost:8080/api",
+});
+
+AxiosAuth.interceptors.request.use((config) => {
+  const tokenUser = cookies.get("auth:token");
+  if (tokenUser) {
+    config.headers.Authorization = `Bearer ${tokenUser}`;
+  } else {
+    delete config.headers.Authorization;
+  }
+  return config;
 });
