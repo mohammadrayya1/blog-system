@@ -18,7 +18,8 @@ class AuthService
         private AbstructAccountRepository   $userRepository,
         private UserPasswordHasherInterface $passwordHasher,
         private ValidatorInterface          $validator,
-        private JWTTokenManagerInterface    $JWTManager
+        private JWTTokenManagerInterface    $JWTManager,
+
     )
     {
     }

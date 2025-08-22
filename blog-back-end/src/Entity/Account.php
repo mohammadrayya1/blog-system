@@ -37,7 +37,7 @@ class Account extends AbstructAccount
     #[ORM\OneToMany(targetEntity: Followers::class, mappedBy: 'account')]
     private Collection $followers;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255,nullable: true)]
     private ?string $image = null;
 
     public function __construct()

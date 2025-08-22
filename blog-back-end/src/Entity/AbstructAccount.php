@@ -6,6 +6,7 @@ use App\Repository\AbstructAccountRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: AbstructAccountRepository::class)]
 #[ORM\InheritanceType("JOINED")]
@@ -14,6 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
     "admin_account" => AdminAccount::class,
     "account" => Account::class
 ])]
+#[UniqueEntity(fields: ['email'], message: 'This email is already in use')]
 class AbstructAccount implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
@@ -21,7 +23,7 @@ class AbstructAccount implements PasswordAuthenticatedUserInterface, UserInterfa
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
