@@ -17,8 +17,8 @@ class AccountService
 
     public function __construct(
         private readonly SendEmailService $emailService,
-        private readonly string $uploadDir,   // من config/services.yaml (اختياري إن كنت تستخدمه)
-        private readonly string $uploadPath,  // من config/services.yaml (اختياري إن كنت تستخدمه)
+        private readonly string $uploadDir,
+        private readonly string $uploadPath,
         private UserPasswordHasherInterface $passwordHasher,
         private ValidatorInterface $validator,
         private JWTTokenManagerInterface $JWTManager,
@@ -28,14 +28,10 @@ class AccountService
         $this->projectDir = $params->get('kernel.project_dir');
     }
 
-    /**
-     * تُعيد:
-     *  - ['ok' => false, 'errors' => ['field' => 'message', ...]] في حال وجود أخطاء
-     *  - ['ok' => true,  'data'   => [...]] في حال النجاح
-     */
+
     public function createNewAccount(RegisterAccountDTO $dto, ?UploadedFile $file = null): array
     {
-        // 1) التحقق من الـDTO
+
         $dtoErrors = $this->validator->validate($dto);
         if (count($dtoErrors) > 0) {
             $messages = [];
@@ -45,7 +41,7 @@ class AccountService
             return ['ok' => false, 'errors' => $messages];
         }
 
-        // 2) بناء الكيان
+
         $account = new Account();
         $account->setEmail($dto->email);
         $account->setFirstName($dto->firstName ?? '');
@@ -54,7 +50,7 @@ class AccountService
         $account->setPhone($dto->phone ?? '');
         $account->setAddress($dto->address ?? '');
 
-        // 3) التحقق من الكيان
+
         $entityErrors = $this->validator->validate($account);
         if (count($entityErrors) > 0) {
             $messages = [];
@@ -64,12 +60,12 @@ class AccountService
             return ['ok' => false, 'errors' => $messages];
         }
 
-        // 4) رفع الصورة (اختياري)
+
         if ($file instanceof UploadedFile) {
             $extension   = $file->guessExtension() ?: $file->getClientOriginalExtension() ?: 'bin';
             $newFilename = uniqid('acc_', true) . '.' . $extension;
 
-            // يمكنك استخدام $this->uploadDir لو مهيأ في الخدمات؛ هنا نستخدم مسارًا آمنًا داخل public
+
             $uploadDirAbs = rtrim($this->projectDir, DIRECTORY_SEPARATOR) . '/public/uploads/accounts';
 
             if (!is_dir($uploadDirAbs) && !mkdir($uploadDirAbs, 0777, true) && !is_dir($uploadDirAbs)) {
@@ -82,32 +78,31 @@ class AccountService
                 return ['ok' => false, 'errors' => ['image' => 'Failed to upload image']];
             }
 
-            // مسار الويب
+
             $account->setImage('/uploads/accounts/' . $newFilename);
         } elseif (!empty($dto->image)) {
-            // لو العميل أرسل رابط صورة نصّيًا
+
             $account->setImage($dto->image);
         }
 
-        // 5) كلمة المرور
+
         $hashedPassword = $this->passwordHasher->hashPassword($account, $dto->password);
         $account->setPassword($hashedPassword);
 
-        // 6) الحفظ
+
         try {
             $this->entityManager->persist($account);
             $this->entityManager->flush();
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException) {
             return ['ok' => false, 'errors' => ['email' => 'This email is already registered']];
         } catch (\Throwable $e) {
-            // لا نعيد trace/stack في الإنتاج
+
             return ['ok' => false, 'errors' => ['general' => 'Database error']];
         }
 
-        // 7) التوكن
+
         $token = $this->JWTManager->create($account);
 
-        // 8) نجاح
         return [
             'ok'   => true,
             'data' => [

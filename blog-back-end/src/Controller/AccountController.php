@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class AccountController extends AbstractController
 {
@@ -20,7 +21,8 @@ final class AccountController extends AbstractController
         private readonly FollowService $followService
     ) {}
 
-    #[Route('/account/{id}', name: 'app_account', methods: ['GET'])]
+    #[Route('/api/account/{id}', name: 'app_account', methods: ['GET'])]
+    #[IsGranted('ACCOUNT_VIEW', subject: 'account')]
     public function getProfile(Account $account): JsonResponse
     {
         $postsArray         = [];
@@ -73,7 +75,7 @@ final class AccountController extends AbstractController
     #[Route('/api/register', name: 'app_account_register', methods: ['POST'])]
     public function register(Request $request): JsonResponse
     {
-        // يدعم JSON و multipart/form-data
+
         $data = json_decode($request->getContent(), true);
         if (!is_array($data) || empty($data)) {
             $data = $request->request->all();
@@ -99,18 +101,18 @@ final class AccountController extends AbstractController
             $result = $this->accountService->createNewAccount($dto, $file);
 
             if (!$result['ok']) {
-                // يمكن هنا إزالة أي حقل debug قبل الإرجاع في الإنتاج
+
                 return $this->json(['errors' => $result['errors']], 400);
             }
 
-            // نجاح
+
             return $this->json(array_merge(
                 ['message' => 'Account created successfully'],
                 $result['data']
             ), 201);
 
         } catch (\Throwable $e) {
-            // في الظروف غير المتوقعة
+
             return $this->json([
                 'errors' => ['general' => 'Something went wrong'],
             ], 500);

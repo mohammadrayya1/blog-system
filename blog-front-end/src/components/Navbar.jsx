@@ -7,6 +7,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
 
+  console.log(user);
   return (
       <div className="w-full h-16 md:h-20 flex items-center justify-between">
         {/* LOGO */}
@@ -68,18 +69,19 @@ const Navbar = () => {
           <a href="">Most popular</a>
           <a href="">About</a>
 
-          {isAuthenticated ? (
-              <div className="flex items-center gap-4">
-            <span className="text-gray-700">
-              👤 {user?.name || user?.email}
-            </span>
-                <button
-                    onClick={logout}
-                    className="py-2 px-4 rounded-3xl bg-red-600 text-white"
-                >
-                  Logout
-                </button>
-              </div>
+            {isAuthenticated ? (
+                <div className="flex items-center gap-4">
+                    <Link to={`/profile/${user?.name}`} className="text-gray-700 hover:underline">
+                        👤 {user?.name || user?.email}
+                    </Link>
+                    <Link to="/write" className="py-2 px-4 rounded-3xl bg-green-700 text-white">
+                        Write
+                    </Link>
+                    <button onClick={logout} className="py-2 px-4 rounded-3xl bg-red-600 text-white">
+                        Logout
+                    </button>
+
+                </div>
           ) : (
               <Link to="/login">
                 <button className="py-2 px-4 rounded-3xl bg-blue-800 text-white">

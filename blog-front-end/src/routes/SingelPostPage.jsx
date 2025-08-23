@@ -6,47 +6,55 @@ import { AxiosUser, AxiosAuth } from "../components/Api/Axios";
 import ImageKit from "../components/ImageKit.jsx";
 import { format } from "timeago.js";
 import { useAuth } from "../components/AuthContext";
+import Comment from "../components/Comment.jsx";
+import AddComment from "../components/AddComment.jsx";
 
-// --- API ---
-const fetchPost = async (id) => {
-  const res = await AxiosUser.get(`/post/${id}`);
-  return res.data.data; // يتوقع { ..., likedByMe, likes, ... }
+
+const fetchPostAuthedAware = async ({ queryKey }) => {
+  const [_key, id, viewerId] = queryKey;
+  const client = viewerId ? AxiosAuth : AxiosUser;
+  const res = await client.get(`/post/${id}`);
+  return res.data.data;
 };
 
 const likePost = async (id) => {
-  const res = await AxiosAuth.post(`/post/${id}/like`, {}); // {} لضبط Content-Type
-  return res.data; // يفضّل يرجّع { likes, liked }
+  const res = await AxiosAuth.post(`/post/${id}/like`, {});
+
+  return res.data;
 };
 
-// --- Component ---
+
 const SingelPostPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading, user: authUser } = useAuth();
+  const viewerId = authUser?.id ?? null;
   const queryClient = useQueryClient();
 
-  // جلب تفاصيل البوست
+
   const {
     data: post,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["post", id],
-    queryFn: () => fetchPost(id),
+    queryKey: ["post", id, viewerId],
+    queryFn: fetchPostAuthedAware,
+    enabled: !!id && !loading,
+
   });
 
-  // Mutation للايك مع تحديث متفائل
   const likeMutation = useMutation({
     mutationFn: () => likePost(id),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ["post", id] });
-      const previous = queryClient.getQueryData(["post", id]);
 
-      // تحديث فوري (تفاؤلي)
+
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ["post", id, viewerId] });
+      const previous = queryClient.getQueryData(["post", id, viewerId]);
+
       if (previous) {
-        queryClient.setQueryData(["post", id], (old) => {
+        queryClient.setQueryData(["post", id, viewerId], (old) => {
           if (!old) return old;
           const likedNow = !old.likedByMe;
           return {
@@ -58,22 +66,26 @@ const SingelPostPage = () => {
       }
       return { previous };
     },
+
     onError: (_err, _vars, ctx) => {
-      // تراجع لو حدث خطأ
       if (ctx?.previous) {
-        queryClient.setQueryData(["post", id], ctx.previous);
+        queryClient.setQueryData(["post", id, viewerId], ctx.previous);
       }
     },
+
     onSuccess: (data) => {
-      // مزامنة مع رد السيرفر إن وفّر قيمًا دقيقة
-      queryClient.setQueryData(["post", id], (old) => {
+
+      queryClient.setQueryData(["post", id, viewerId], (old) => {
         if (!old) return old;
-        const likes =
-            typeof data?.likes === "number" ? data.likes : old.likes;
-        const liked =
-            typeof data?.liked === "boolean" ? data.liked : old.likedByMe;
-        return { ...old, likes, likedByMe: liked };
+        return {
+          ...old,
+          likes: typeof data?.likes === "number" ? data.likes : old.likes,
+          likedByMe:
+              typeof data?.liked === "boolean" ? data.liked : old.likedByMe,
+        };
       });
+
+
     },
   });
 
@@ -85,13 +97,12 @@ const SingelPostPage = () => {
     likeMutation.mutate();
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (loading || isLoading) return <p>Loading...</p>;
   if (isError) return <p>Error loading post. {error?.message}</p>;
   if (!post) return <p>Post not found.</p>;
 
   return (
       <div className="max-w-2xl mx-auto px-4 py-8 bg-white shadow rounded-lg">
-        {/* الهيدر (User Info) */}
         <div className="flex items-center gap-3 mb-6">
           <ImageKit
               src={post.userImage}
@@ -106,10 +117,8 @@ const SingelPostPage = () => {
           </div>
         </div>
 
-        {/* وصف/عنوان البوست */}
         <h1 className="text-xl font-semibold mb-4">{post.description}</h1>
 
-        {/* صورة البوست */}
         {post.image && (
             <div className="mb-6">
               <ImageKit
@@ -120,7 +129,6 @@ const SingelPostPage = () => {
             </div>
         )}
 
-        {/* محتوى البوست */}
         {post.content && (
             <div
                 className="prose prose-lg max-w-none mb-6"
@@ -128,7 +136,6 @@ const SingelPostPage = () => {
             />
         )}
 
-        {/* أكشنز */}
         <div className="flex justify-between items-center text-sm text-gray-600 border-t pt-4">
           <button
               onClick={handleLike}
@@ -146,6 +153,15 @@ const SingelPostPage = () => {
           </button>
 
           <span>💬 {post.comments?.length ?? 0} Comments</span>
+        </div>
+
+        <AddComment postId={id} />
+        <div className="flex flex-col gap-4 mt-4">
+          {post.comments?.length > 0 ? (
+              post.comments.map((c) => <Comment key={c._id} comment={c} />)
+          ) : (
+              <p className="text-gray-500 mt-4">No comments yet.</p>
+          )}
         </div>
       </div>
   );

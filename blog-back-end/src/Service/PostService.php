@@ -1,17 +1,23 @@
 <?php
 namespace App\Service;
 
+use App\DtoEntity\CommentDTO;
+use App\Entity\Comment;
 use App\Entity\Like;
 use App\Repository\LikeRepository;
 use App\Repository\PostRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PostService
 {
     public function __construct(private readonly PostRepository $postRepository,
                                 private readonly LikeRepository $likeRepository,
-                                private readonly Security $security) {}
+                                private readonly Security $security,
+                                private readonly ValidatorInterface $validator,
+                                private EntityManagerInterface $entityManager) {}
 
     // PostService.php
     public function getAllposts(Request $request): array
@@ -58,9 +64,12 @@ class PostService
         }
         $comments=[];
         foreach ($post->getComments() as $comment ){
+            $user=$comment->getAccount();
+
             $comments[]=[
                 "comment"=>$comment->getCommentText(),
-                "user"=>$comment->getAccount(),
+                "userName"=>$user->getFirstName(),
+                "createdAt"=>$comment->getCreatedAt()->format('Y-m-d H:i:s'),
                 "imageOfUser"=>$comment->getAccount()->getImage()
             ];
         }
@@ -78,6 +87,39 @@ class PostService
 
     }
 
+
+
+    public function addCommentToPost($data){
+
+    $account=$this->security->getUser();
+
+    $post = $this->postRepository->find($data['postId'] ?? null);
+        if (!$post) {
+            throw new \RuntimeException('Post not found');
+        }
+        if (
+            !$account
+
+        ) {
+            throw new \RuntimeException('Unauthorized');
+        }
+        $commentDto = new CommentDTO();
+        $commentDto->comment_text = (string)($data['comment_text'] ?? '');
+
+        $errors = $this->validator->validate($commentDto);
+        if (count($errors) > 0) {
+
+            throw new \InvalidArgumentException((string)$errors);
+        }
+        $comment = new Comment();
+        $comment->setCommentText($commentDto->comment_text);
+        $comment->setPost($post);
+        $comment->setAccount($account);
+
+        $this->entityManager->persist($comment);
+        $this->entityManager->flush();
+        return $comment;
+    }
     private function resolveCategoryName(?string $cat): ?string
     {
         if (!$cat) return null;
@@ -95,4 +137,8 @@ class PostService
 
         return $map[$cat] ?? $cat;
     }
+
+
+
+
 }

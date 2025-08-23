@@ -21,7 +21,7 @@ export default function RegisterPage() {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm((f) => ({ ...f, [name]: value }));
-        setErrors((err) => ({ ...err, [name]: "" })); // امسح خطأ الحقل عند الكتابة
+        setErrors((err) => ({ ...err, [name]: "" }));
         setSuccess("");
     };
 
@@ -61,7 +61,7 @@ export default function RegisterPage() {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            // نجاح: خزّن التوكن إن أردت استخدامه لاحقًا
+
             if (res?.data?.token) {
                 localStorage.setItem("token", res.data.token);
             }
