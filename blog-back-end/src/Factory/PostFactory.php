@@ -34,7 +34,7 @@ final class PostFactory extends PersistentProxyObjectFactory
         return [
             'account' => AccountFactory::new(),
             'createdAt' => self::faker()->dateTime(),
-            'description' => self::faker()->sentence(),
+            'content' => self::faker()->sentence(),
             'updatedAt' => self::faker()->dateTime(),
             "image" => 'https://picsum.photos/seed/' . uniqid() . '/300/300',
             'category' => CategoryFactory::random() ?? CategoryFactory::createOne(),

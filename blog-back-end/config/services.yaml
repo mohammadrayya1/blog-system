@@ -6,6 +6,8 @@
 parameters:
   account_upload_dir: '%kernel.project_dir%/public/uploads/accounts'
   account_upload_path: '/uploads/accounts'
+  post_upload_dir: '%kernel.project_dir%/public/uploads/posts'
+  post_upload_path: '/uploads/posts'
 
 services:
   # default configuration for services in *this* file
@@ -31,6 +33,11 @@ services:
     arguments:
       $uploadDir: '%account_upload_dir%'
       $uploadPath: '%account_upload_path%'
+
+  App\Service\PostService:
+    arguments:
+      $uploadPostDir: '%post_upload_dir%'
+      $uploadPostPath: '%post_upload_path%'
 
   App\Listener\AbstructUserListener:
     tags:

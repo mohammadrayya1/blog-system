@@ -24,7 +24,7 @@ const PostListItem = ({ post }) => {
                     <span>on</span>
                     <span>{format(post.createdAt)}</span>
                 </div>
-                <p>{post.description}</p>
+                <p>{post.content}</p>
                 <Link to={`/${post.id}`} className="underline text-blue-800 text-sm">
                     Read More
                 </Link>

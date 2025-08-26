@@ -23,7 +23,7 @@ class Post
     private ?Account $account = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $description = null;
+    private ?string $content = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
@@ -64,14 +64,14 @@ class Post
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getContent(): ?string
     {
-        return $this->description;
+        return $this->content;
     }
 
-    public function setDescription(string $description): static
+    public function setContent(string $content): static
     {
-        $this->description = $description;
+        $this->content = $content;
 
         return $this;
     }

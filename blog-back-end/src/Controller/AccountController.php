@@ -52,7 +52,7 @@ final class AccountController extends AbstractController
         foreach ($account->getPosts() as $post) {
             $postsArray[] = [
                 'id'    => $post->getId(),
-                'title' => $post->getDescription(),
+                'content' => $post->getContent(),
                 'likes' => $post->getLikes(),
             ];
         }

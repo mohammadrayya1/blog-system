@@ -9,8 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 class AdminAccount extends AbstructAccount
 {
 
-    public const ROLLE_ADMIN = "ROLLE_ADMIN";
-    public const ROLLE_SUPER_ADMIN = "ROLLE_SUPER_ADMIN";
+    public const ROLE_ADMIN = "ROLE_ADMIN";
+    public const ROLE_SUPER_ADMIN = "ROLE_SUPER_ADMIN";
+
 
     #[ORM\Column(length: 255)]
     private ?string $adminRolle = null;
@@ -30,6 +31,6 @@ class AdminAccount extends AbstructAccount
 
     public function getRoles(): array
     {
-        return [$this->adminRolle ?? self::ROLLE_ADMIN];
+        return [$this->adminRolle ?? self::ROLE_ADMIN];
     }
 }

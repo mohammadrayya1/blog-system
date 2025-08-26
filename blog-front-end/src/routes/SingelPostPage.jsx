@@ -121,13 +121,14 @@ const SingelPostPage = () => {
 
         {post.image && (
             <div className="mb-6">
-              <ImageKit
+              <img
                   src={post.image}
+                  alt="Post"
                   className="rounded-lg w-full object-cover"
-                  w="900"
               />
             </div>
         )}
+
 
         {post.content && (
             <div

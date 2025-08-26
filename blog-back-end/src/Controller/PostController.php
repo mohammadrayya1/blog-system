@@ -2,14 +2,17 @@
 
 namespace App\Controller;
 
+use App\DtoEntity\CreatePostDTO;
 use App\Repository\CategoryRepository;
 use App\Repository\PostRepository;
 use App\Service\LikeService;
 use App\Service\PostService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 final class PostController extends AbstractController
@@ -32,7 +35,8 @@ final class PostController extends AbstractController
 
     #[Route("/api/post/{id}",name:"app_post_by_id",methods:"GET")]
     public function getPost(int $id,Request $request){
-        $post=$this->postService->getPostById($id);
+        $http = $request->getSchemeAndHttpHost();
+        $post=$this->postService->getPostById($id,$http);
        // $commetns=$this->postService->getAllComments($id);
         return $this->json([
             "data"=>$post
@@ -53,8 +57,8 @@ final class PostController extends AbstractController
 
         return $this->json([
             'id'    => (int) $post->getId(),
-            'likes' => (int) $state['likes'],  // ✅ استخدم 'likes'
-            'liked' => (bool) $state['liked'], // ✅ استخدم 'liked'
+            'likes' => (int) $state['likes'],
+            'liked' => (bool) $state['liked'],
         ]);
     }
 
@@ -91,4 +95,47 @@ final class PostController extends AbstractController
         ], 201);
 
     }
+
+    #[Route('/api/addnewpost', name: 'api_post_create', methods: ['POST'])]
+    public function addNewPost(
+        Request $request,
+        Security $security,
+        ValidatorInterface $validator,
+        PostService $postService
+    ): JsonResponse {
+        $user = $security->getUser();
+        if (!$user) {
+            return $this->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $dto = CreatePostDTO::fromRequest($request, $user);
+
+        $errors = $validator->validate($dto);
+        if (count($errors) > 0) {
+            $msgs = [];
+            foreach ($errors as $e) {
+                $msgs[] = $e->getPropertyPath().': '.$e->getMessage();
+            }
+            return $this->json(['error' => 'Validation failed', 'details' => $msgs], 400);
+        }
+
+        $post = $postService->addPost($dto);
+
+        return $this->json([
+            'message' => 'Post created successfully',
+            'id'      => $post->getId(),
+        ], 201);
+    }
+
+
+    #[Route("/api/posts/{accountId}",name:"app_get_post_for_account",methods:"GET")]
+    public function getpostsOfdAccount($accountId){
+
+        $posts=$this->postService->getPostForAccount($accountId);
+        return $this->json([
+            'data' => $posts
+        ]);
+    }
+
+
 }

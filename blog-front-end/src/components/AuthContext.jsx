@@ -15,7 +15,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // 👈 جديد
 
-  // استرجاع من الكوكي عند أول تحميل
+
   useEffect(() => {
     const savedToken = cookies.get("auth:token");
     const savedUser = cookies.get("auth:user");
@@ -36,10 +36,10 @@ export function AuthProvider({ children }) {
       }
     }
 
-    setLoading(false); // 👈 خلصنا قراءة الكوكي
+    setLoading(false);
   }, []);
 
-  // مراقبة التوكن وتحديث الكوكي
+
   useEffect(() => {
     if (token) {
       axios.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -89,7 +89,7 @@ export function AuthProvider({ children }) {
         token,
         user,
         isAuthenticated: !!token,
-        loading, // 👈 نضيفها للـ context
+        loading,
         login,
         logout,
       }),

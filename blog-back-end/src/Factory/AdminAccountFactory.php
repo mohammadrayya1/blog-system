@@ -32,11 +32,11 @@ final class AdminAccountFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'adminRolle' => self::faker()->randomElement([AdminAccount::ROLLE_ADMIN, AdminAccount::ROLLE_SUPER_ADMIN]),
+            'adminRolle' => self::faker()->randomElement([AdminAccount::ROLE_ADMIN, AdminAccount::ROLE_SUPER_ADMIN]),
             'email' => self::faker()->email(255),
             'firstName' => self::faker()->firstName(255),
             'lastName' => self::faker()->lastName(255),
-            'plainPassword' => self::faker()->password(12, 20),
+            'plainPassword' => 'Test1234',
         ];
     }
 
