@@ -85,7 +85,20 @@ services:
       - nginx
       - php
 
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: blog-jenkins
+    restart: unless-stopped
+    user: root
+    ports:
+      - "8082:8080"   
+      - "50000:50000" 
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock  
+       
 volumes:
   mysql_data:
   frontend_node_modules:
   symfony_var:
+  jenkins_home:  
