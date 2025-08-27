@@ -1,11 +1,23 @@
-pipeline {
-    agent any
+node{
+    git branch: "main", url:"https://github.com/mohammadrayya1/blog-system"
 
-    stages {
-        stage('Hello') {
-            steps {
-                echo 'Hello Jenkins!'
-            }
+    stage("build"){
+        try{
+        sh' echo "Hello From Build stage"'
+                }catch(Exeption e){
+
+                sh'echo "exeption"'
+                throw e
+                }
+    }
+
+
+    stage("test"){
+        if(env.BRANCH_NAME=== 'featch '){
+            sh'echo "test stage"'
+        }
+        else{
+          sh'echo "skipt test stage"'
         }
     }
 }
