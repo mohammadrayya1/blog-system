@@ -28,7 +28,7 @@ final class PostController extends AbstractController
     public function index(Request $request): JsonResponse
     {
         return $this->json(
-            $this->postService->getAllposts($request)
+            $this->postService->getAllposts($request,$http = $request->getSchemeAndHttpHost())
         );
 
     }

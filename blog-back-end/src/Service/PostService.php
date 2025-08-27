@@ -29,7 +29,7 @@ class PostService
                                 private string $uploadPostPath,) {}
 
     // PostService.php
-    public function getAllposts(Request $request): array
+    public function getAllposts(Request $request,$http): array
     {
         $page  = max(1, (int) $request->query->get('page', 1));
         $limit = min(50, max(1, (int) $request->query->get('limit', 10)));
@@ -44,7 +44,7 @@ class PostService
             'id'          => $p->getId(),
             'content' => $p->getContent(),
             'owner'       => $p->getAccount()->getFirstName(),
-            'image'       => $p->getImage(),
+            'image'       => $http."".$p->getImage(),
             'category'    => $p->getCategory()?->getName(),
             'createdAt'   => $p->getCreatedAt()->format('Y-m-d H:i:s'),
         ], $posts);
@@ -201,8 +201,7 @@ class PostService
     }
 
 
-
-        public function getPostForAccount(int $accountId): array
+    public function getPostForAccount(int $accountId): array
         {
             $posts = $this->postRepository->findBy(
                 ['account' => $accountId],
