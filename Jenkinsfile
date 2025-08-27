@@ -1,20 +1,23 @@
-node {
-    git branch: "main", url: "https://github.com/mohammadrayya1/blog-system"
+pipline{
+    agent any
 
-    stage("build") {
-        try {
-            sh 'echo "Hello From Build stage"'
-        } catch (Exception e) {
-            sh 'echo "exception happened"'
-            throw e
+    stages{
+        stage("build"){
+          step{
+            script{
+                echo "Hello From The first build"
+            }
+          }
+        }
+
+
+        stage("test"){
+          step{
+            script{
+                echo "Hello From The first Test"
+            }
+          }
         }
     }
 
-    stage("test") {
-        if (env.BRANCH_NAME == 'feature') {
-            sh 'echo "test stage"'
-        } else {
-            sh 'echo "skip test stage"'
-        }
-    }
 }
