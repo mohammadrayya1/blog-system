@@ -19,7 +19,7 @@ class Like
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private Account $account ;
+    private AbstructAccount $account ;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
@@ -30,12 +30,12 @@ class Like
         return $this->id;
     }
 
-    public function getAccount(): ?Account
+    public function getAccount(): ?AbstructAccount
     {
         return $this->account;
     }
 
-    public function setAccount(?Account $account): static
+    public function setAccount(?AbstructAccount $account): static
     {
         $this->account = $account;
 

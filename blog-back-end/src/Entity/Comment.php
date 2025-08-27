@@ -21,8 +21,8 @@ class Comment
     #[ORM\JoinColumn(nullable: false)]
     private Post $post;
 
-    #[ORM\ManyToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Account::class)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private Account $account;
 
     #[ORM\Column(length: 255)]

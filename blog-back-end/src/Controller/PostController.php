@@ -3,10 +3,14 @@
 namespace App\Controller;
 
 use App\DtoEntity\CreatePostDTO;
+use App\Entity\Account;
+use App\Entity\Post;
 use App\Repository\CategoryRepository;
+use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use App\Service\LikeService;
 use App\Service\PostService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +24,9 @@ final class PostController extends AbstractController
     public function __construct(
         private readonly PostService $postService,
         private readonly   LikeService $likeService,
-        private readonly CategoryRepository $categoryRepository)
+        private readonly CategoryRepository $categoryRepository,
+         private readonly CommentRepository $commentRepository,
+        private readonly EntityManagerInterface $entityManager)
     {
     }
 
@@ -135,6 +141,105 @@ final class PostController extends AbstractController
         return $this->json([
             'data' => $posts
         ]);
+    }
+
+    #[Route("/api/comment/{accountId}/{postId}/{commentId}",name:"app_delete_comment_of_account",methods:"DELETE")]
+    public function deleteComment($accountId,$postId,$commentId): JsonResponse{
+
+        $account = $this->entityManager->find(Account::class,$accountId);
+        $post= $this->entityManager->find(Post::class,$postId);
+        $comment= $this->commentRepository->findOneBy([
+            "id"=>$commentId,
+            "post"=>$post,
+            "account"=>$account
+        ]);
+        if (!$comment) {
+            return $this->json([
+                "error" => "Comment not found"
+            ], 404);
+        }
+        $this->entityManager->remove($comment);
+        $this->entityManager->flush();
+        return $this->json([
+            "message" => "Comment deleted successfully"
+        ], 200);
+
+
+    }
+
+
+    #[Route(
+        "/api/comment/{accountId}/{postId}/{commentId}",
+        name: "app_edit_comment_of_account",
+        methods: ["PUT"],
+        requirements: ["accountId" => "\d+", "postId" => "\d+", "commentId" => "\d+"]
+    )]
+    #[IsGranted('ROLE_USER')]
+    public function editComment(
+        Request $request,
+        int $accountId,
+        int $postId,
+        int $commentId,
+        ValidatorInterface $validator
+    ): JsonResponse {
+
+        $user = $this->getUser();
+        if (!$user || !$user instanceof Account) {
+            return $this->json(['error' => 'Unauthorized'], 401);
+        }
+        if ($user->getId() !== $accountId) {
+            return $this->json(['error' => 'Forbidden'], 403);
+        }
+        $account = $user;
+
+
+        $post = $this->entityManager->find(Post::class, $postId);
+        if (!$post) {
+            return $this->json(['error' => 'Post not found'], 404);
+        }
+
+        $comment = $this->commentRepository->findOneBy([
+            'id'      => $commentId,
+            'post'    => $post,
+            'account' => $account,
+        ]);
+        if (!$comment) {
+            return $this->json(['error' => 'Comment not found'], 404);
+        }
+
+
+        try {
+            $data = $request->toArray();
+        } catch (\JsonException $e) {
+            return $this->json(['error' => 'Invalid JSON'], 400);
+        }
+
+        $text = trim((string)($data['comment'] ?? ''));
+        if ($text === '') {
+            return $this->json(['error' => 'Comment text is required'], 422);
+        }
+        if (mb_strlen($text) > 1000) {
+            return $this->json(['error' => 'Comment is too long (max 1000 chars)'], 422);
+        }
+
+
+             $comment->setCommentText(strip_tags($text));
+
+        try {
+            $this->entityManager->flush();
+        } catch (\Throwable $e) {
+
+            return $this->json(['error' => 'Failed to update comment'], 500);
+        }
+
+        return $this->json([
+            'message' => 'Comment updated successfully',
+            'comment' => [
+                'id'        => $comment->getId(),
+                'comment'   => $comment->getCommentText(),
+                'updatedAt' => $comment->getUpdatedAt()?->format('Y-m-d H:i:s'),
+            ]
+        ], 200);
     }
 
 

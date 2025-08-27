@@ -23,8 +23,9 @@ final class AccountController extends AbstractController
 
     #[Route('/api/account/{id}', name: 'app_account', methods: ['GET'])]
     #[IsGranted('ACCOUNT_VIEW', subject: 'account')]
-    public function getProfile(Account $account): JsonResponse
+    public function getProfile(Request $request,Account $account): JsonResponse
     {
+        $http = $request->getSchemeAndHttpHost();
         $postsArray         = [];
         $followersArray     = [];
         $notificationsArrray = [];
@@ -62,7 +63,7 @@ final class AccountController extends AbstractController
                 'id'            => $account->getId(),
                 'title'         => $account->getTitle(),
                 'firstname'     => $account->getFirstName(),
-                "image"         => $account->getImage(),
+                "image"         =>  $this->buildImageUrl($account->getImage(),$http),
                 'phone'         => $account->getPhone(),
                 'address'       => $account->getAddress(),
                 'posts'         => $postsArray,
@@ -117,5 +118,22 @@ final class AccountController extends AbstractController
                 'errors' => ['general' => 'Something went wrong'],
             ], 500);
         }
+    }
+
+
+
+    private function buildImageUrl(?string $path, string $http): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+
+        if (preg_match('/^https?:\/\//', $path)) {
+            return $path;
+        }
+
+
+        return $http . $path;
     }
 }

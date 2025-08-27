@@ -44,7 +44,7 @@ class PostService
             'id'          => $p->getId(),
             'content' => $p->getContent(),
             'owner'       => $p->getAccount()->getFirstName(),
-            'image'       => $http."".$p->getImage(),
+            'image'       => $this->buildImageUrl($p->getImage(),$http),
             'category'    => $p->getCategory()?->getName(),
             'createdAt'   => $p->getCreatedAt()->format('Y-m-d H:i:s'),
         ], $posts);
@@ -76,18 +76,20 @@ class PostService
             $user=$comment->getAccount();
 
             $comments[]=[
+                "id"=>$comment->getId(),
                 "comment"=>$comment->getCommentText(),
                 "userName"=>$user->getFirstName(),
                 "createdAt"=>$comment->getCreatedAt()->format('Y-m-d H:i:s'),
-                "imageOfUser"=>$comment->getAccount()->getImage()
+                "imageOfUser"=>  $this->buildImageUrl($comment->getAccount()->getImage(),$http),
+                "accountId"=> $user->getId()
             ];
         }
 
         return [
             "id"=>$post->getId(),
             'user'=>$post->getAccount()->getFirstName(),
-            "userImage"=>$http."".$post->getAccount()->getImage(),
-            "image"=>$http."".$post->getImage(),
+            "userImage"=> $this->buildImageUrl($post->getAccount()->getImage(),$http),
+            "image"=> $this->buildImageUrl($post->getImage(),$http),
             "content"=>$post->getContent(),
             "likes"=>$post->getLikes(),
             "comments"=>$comments,
@@ -224,5 +226,20 @@ class PostService
             return $result;
         }
 
+
+    private function buildImageUrl(?string $path, string $http): ?string
+    {
+        if (!$path) {
+            return null;
+        }
+
+
+        if (preg_match('/^https?:\/\//', $path)) {
+            return $path;
+        }
+
+
+        return $http . $path;
+    }
 
 }

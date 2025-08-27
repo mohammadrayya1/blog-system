@@ -137,12 +137,12 @@ class Account extends AbstructAccount
     /**
      * @return Collection<int, Followers>
      */
-    public function getFollowers(): Collection  // تغيير من getNo إلى getFollowers
+    public function getFollowers(): Collection
     {
         return $this->followers;
     }
 
-    public function addFollower(Followers $follower): static  // تغيير من addNo
+    public function addFollower(Followers $follower): static
     {
         if (!$this->followers->contains($follower)) {
             $this->followers->add($follower);
@@ -151,8 +151,7 @@ class Account extends AbstructAccount
         return $this;
     }
 
-    public function removeFollower(Followers $follower): static  // تغيير من removeNo
-    {
+    public function removeFollower(Followers $follower): static    {
         if ($this->followers->removeElement($follower)) {
             if ($follower->getAccount() === $this) {
                 $follower->setAccount(null);
