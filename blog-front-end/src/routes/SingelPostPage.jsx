@@ -3,12 +3,10 @@ import React from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosUser, AxiosAuth } from "../components/Api/Axios";
-import ImageKit from "../components/ImageKit.jsx";
 import { format } from "timeago.js";
 import { useAuth } from "../components/AuthContext";
 import Comment from "../components/Comment.jsx";
 import AddComment from "../components/AddComment.jsx";
-
 
 const fetchPostAuthedAware = async ({ queryKey }) => {
   const [_key, id, viewerId] = queryKey;
@@ -19,10 +17,8 @@ const fetchPostAuthedAware = async ({ queryKey }) => {
 
 const likePost = async (id) => {
   const res = await AxiosAuth.post(`/post/${id}/like`, {});
-
   return res.data;
 };
-
 
 const SingelPostPage = () => {
   const { id } = useParams();
@@ -32,6 +28,7 @@ const SingelPostPage = () => {
   const viewerId = authUser?.id ?? null;
   const queryClient = useQueryClient();
 
+  const [message, setMessage] = React.useState("");
 
   const {
     data: post,
@@ -42,17 +39,13 @@ const SingelPostPage = () => {
     queryKey: ["post", id, viewerId],
     queryFn: fetchPostAuthedAware,
     enabled: !!id && !loading,
-
   });
 
   const likeMutation = useMutation({
     mutationFn: () => likePost(id),
-
-
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["post", id, viewerId] });
       const previous = queryClient.getQueryData(["post", id, viewerId]);
-
       if (previous) {
         queryClient.setQueryData(["post", id, viewerId], (old) => {
           if (!old) return old;
@@ -66,15 +59,12 @@ const SingelPostPage = () => {
       }
       return { previous };
     },
-
     onError: (_err, _vars, ctx) => {
       if (ctx?.previous) {
         queryClient.setQueryData(["post", id, viewerId], ctx.previous);
       }
     },
-
     onSuccess: (data) => {
-
       queryClient.setQueryData(["post", id, viewerId], (old) => {
         if (!old) return old;
         return {
@@ -84,8 +74,6 @@ const SingelPostPage = () => {
               typeof data?.liked === "boolean" ? data.liked : old.likedByMe,
         };
       });
-
-
     },
   });
 
@@ -104,7 +92,7 @@ const SingelPostPage = () => {
   return (
       <div className="max-w-2xl mx-auto px-4 py-8 bg-white shadow rounded-lg">
         <div className="flex items-center gap-3 mb-6">
-          <ImageKit
+          <img
               src={post.userImage}
               alt={post.user}
               className="w-12 h-12 rounded-full border object-cover"
@@ -128,7 +116,6 @@ const SingelPostPage = () => {
               />
             </div>
         )}
-
 
         {post.content && (
             <div
@@ -156,10 +143,20 @@ const SingelPostPage = () => {
           <span>💬 {post.comments?.length ?? 0} Comments</span>
         </div>
 
+
+        {message && (
+            <div className="p-2 my-4 text-sm text-green-800 bg-green-100 rounded">
+              {message}
+            </div>
+        )}
+
         <AddComment postId={id} />
+
         <div className="flex flex-col gap-4 mt-4">
           {post.comments?.length > 0 ? (
-              post.comments.map((c) => <Comment key={c._id} comment={c} />)
+              post.comments.map((c) => (
+                  <Comment key={c._id} comment={c} postId={id} setMessage={setMessage} />
+              ))
           ) : (
               <p className="text-gray-500 mt-4">No comments yet.</p>
           )}

@@ -8,9 +8,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PostSearchController
 {
-    public function __construct(private PostSearch $es) {}
+    public function __construct(private  readonly  PostSearch $es) {}
 
-    #[Route('/api/posts/search', name: 'api_posts_search', methods: ['GET'])]
+    #[Route('/api/postssearch/search', name: 'api_posts_searchl', methods: ['GET'])]
     public function search(Request $r): JsonResponse
     {
         $params = [

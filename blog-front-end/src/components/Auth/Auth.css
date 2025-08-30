@@ -82,6 +82,42 @@
     color: #ff4d4d;
 }
 
+/* يغطي الشاشة كلها */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255,255,255,0.8); /* خلفية شفافة */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+/* الدائرة */
+.spinner {
+    border: 6px solid #eee;
+    border-top: 6px solid #4facfe;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+.spinner-message {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 /* تأثير الدخول */
 @keyframes fadeIn {
     from {
@@ -93,4 +129,21 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+
+/* Secondary line under the form */
+.auth-alt {
+    margin-top: 12px;
+    font-size: 0.95rem;
+    text-align: center;
+    color: #6b7280;
+}
+.auth-alt .link-primary {
+    color: #4facfe;
+    font-weight: 600;
+    text-decoration: none;
+}
+.auth-alt .link-primary:hover {
+    text-decoration: underline;
 }

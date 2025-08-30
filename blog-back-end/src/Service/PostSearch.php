@@ -8,7 +8,7 @@ class PostSearch
 {
     public const INDEX = 'posts_v2';
 
-    public function __construct(private Client $es) {}
+    public function __construct( private  readonly Client $es) {}
 
     public function createIndexIfMissing(): void
     {
@@ -111,11 +111,12 @@ class PostSearch
         $baseQuery = $q !== ''
             ? [
                 'multi_match' => [
-                    'query'    => $q,
-                    'fields'   => ['content^1.5'],
-                    'type'     => 'best_fields',
-                    'operator' => 'and'
+                    'query' => $q,
+                    'fields' => ['content^1.5'],
+                    'type' => 'best_fields',
+                    'minimum_should_match' => '75%'
                 ]
+
             ]
             : ['match_all' => (object)[]];
 

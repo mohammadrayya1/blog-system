@@ -35,13 +35,15 @@ services:
     environment:
       APP_ENV: dev
       COMPOSER_MEMORY_LIMIT: -1
+      ELASTIC_HOST: http://elasticsearch:9200   # ✅ هنا مكانه الصحيح
     volumes:
       - ./blog-back-end:/var/www:delegated
-      # نضع var على Volume مستقل لتفادي مشاكل الصلاحيات عبر نظام الملفات
       - symfony_var:/var/www/var
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/99-project.ini:ro
     depends_on:
       db:
+        condition: service_healthy
+      elasticsearch:
         condition: service_healthy
 
   nginx:
@@ -84,23 +86,28 @@ services:
     depends_on:
       - nginx
       - php
-  jenkins:
-    image: jenkins/jenkins:lts
-    container_name: blog-jenkins
-    restart: unless-stopped
-    user: root
-    ports:
-      - "8082:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock   # حتى يستطيع Jenkins تشغيل Docker داخل الـ container
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.14.0
+    container_name: blog-es
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
 
 volumes:
   mysql_data:
   frontend_node_modules:
   symfony_var:
-  jenkins_home:
-
-  
+  esdata:

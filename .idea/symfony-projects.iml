@@ -89,6 +89,21 @@
       <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/composer" />
       <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/symfony/polyfill-intl-idn" />
       <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/symfony/mime" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/symfony/polyfill-php82" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/php-http/discovery" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/php-http/promise" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/php-http/httplug" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/psr/http-factory" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/psr/http-client" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/psr/http-message" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/elastic/transport" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/open-telemetry/context" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/open-telemetry/api" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/ralouphie/getallheaders" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/elasticsearch/elasticsearch" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/guzzlehttp/guzzle" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/guzzlehttp/promises" />
+      <excludeFolder url="file://$MODULE_DIR$/blog-back-end/vendor/guzzlehttp/psr7" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
